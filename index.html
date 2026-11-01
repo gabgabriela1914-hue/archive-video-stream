@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Internet Archive - Stream</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #121212; color: #fff; margin: 0; padding: 20px; }
+        h1 { text-align: center; color: #1db954; }
+        input { width: 100%; max-width: 600px; display: block; margin: 20px auto; padding: 12px; border-radius: 8px; border: 1px solid #333; background: #222; color: #fff; font-size: 16px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; max-width: 1200px; margin: 0 auto; }
+        .card { background: #1e1e1e; padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); display: flex; flex-direction: column; justify-content: space-between; }
+        .card h3 { font-size: 16px; margin: 0 0 10px 0; color: #e0e0e0; }
+        .badge { display: inline-block; padding: 4px 8px; font-size: 12px; border-radius: 4px; background: #333; margin-bottom: 10px; width: fit-content; text-transform: uppercase; }
+        .btn { display: inline-block; text-align: center; background: #1db954; color: white; padding: 10px; border-radius: 5px; text-decoration: none; font-weight: bold; margin-top: 10px; }
+        .btn:hover { background: #1aa34a; }
+    </style>
+</head>
+<body>
+
+    <h1>Catálogo de Mídias - Archive</h1>
+    <input type="text" id="search" placeholder="Pesquisar filme, série, desenho ou música..." onkeyup="filterItems()">
+    
+    <div class="grid" id="catalog"></div>
+
+    <script>
+        let allItems = [];
+
+        fetch('playlist.json')
+            .then(response => response.json())
+            .then(data => {
+                allItems = data;
+                displayItems(allItems);
+            });
+
+        function displayItems(items) {
+            const catalog = document.getElementById('catalog');
+            catalog.innerHTML = '';
+            
+            if(items.length === 0) {
+                catalog.innerHTML = '<p style="text-align:center; grid-column: 1/-1;">Nenhum item encontrado.</p>';
+                return;
+            }
+
+            items.forEach(item => {
+                const card = document.div;
+                catalog.innerHTML += `
+                    <div class="card">
+                        <div>
+                            <span class="badge">${item.type}</span>
+                            <h3>${item.title}</h3>
+                        </div>
+                        <a class="btn" href="${item.url}" target="_blank">Assistir / Ouvir</a>
+                    </div>
+                `;
+            });
+        }
+
+        function filterItems() {
+            const query = document.getElementById('search').value.toLowerCase();
+            const filtered = allItems.filter(item => item.title.toLowerCase().includes(query));
+            displayItems(filtered);
+        }
+    </script>
+</body>
+</html>
+  
