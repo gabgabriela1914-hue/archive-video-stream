@@ -1,45 +1,54 @@
 import json
+import sys
 import urllib.parse
 import urllib.request
 
-# Termos de busca no Internet Archive (filmes, séries, novelas, desenhos e músicas)
 QUERIES = [
-    'mediatype:movies AND (filme OR serie OR novela OR desenho)',
-    'mediatype:audio AND (musica OR album)'
+    'mediatype:movies AND (title:(filme OR série OR novela OR desenho OR cartoon OR movie) OR subject:(filme OR novela OR desenho OR cartoon OR animation))',
+    'mediatype:audio AND (title:(música OR musica OR album) OR subject:(música OR music OR album))',
 ]
 
 def search_archive():
     results = []
     for query in QUERIES:
-        encoded_query = urllib.parse.quote(query)
-        url = f"https://archive.org/advancedsearch.php?q={encoded_query}&fl[]=identifier,title,mediatype,format&sort[]=&rows=30&page=1&output=json"
+        params = [
+            ("q", query),
+            ("fl[]", "identifier"),
+            ("fl[]", "title"),
+            ("fl[]", "mediatype"),
+            ("rows", "30"),
+            ("page", "1"),
+            ("output", "json"),
+        ]
+        url = "https://archive.org/advancedsearch.php?" + urllib.parse.urlencode(params)
+        print("URL:", url)
 
-        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         try:
-            with urllib.request.urlopen(req) as response:
+            with urllib.request.urlopen(req, timeout=30) as response:
                 data = json.loads(response.read().decode())
-                docs = data.get('response', {}).get('docs', [])
-
-                for item in docs:
-                    identifier = item.get('identifier')
-                    title = item.get('title', 'Sem título')
-                    media_type = item.get('mediatype')
-                    details_url = f"https://archive.org/details/{identifier}"
-
-                    results.append({
-                        "title": title,
-                        "type": media_type,
-                        "identifier": identifier,
-                        "url": details_url
-                    })
         except Exception as e:
-            print(f"Erro na busca: {e}")
+            print(f"Erro na busca: {e}", file=sys.stderr)
+            continue
+
+        docs = data.get("response", {}).get("docs", [])
+        print(f"{len(docs)} itens para: {query[:50]}...")
+
+        for item in docs:
+            identifier = item.get("identifier")
+            results.append({
+                "title": item.get("title", "Sem título"),
+                "type": item.get("mediatype"),
+                "identifier": identifier,
+                "url": f"https://archive.org/details/{identifier}",
+            })
 
     with open("playlist.json", "w", encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
 
     print(f"Total de itens salvos: {len(results)}")
+    if not results:
+        sys.exit(1)  # faz o workflow falhar visivelmente
 
 if __name__ == "__main__":
     search_archive()
-              
