@@ -192,12 +192,6 @@
     "url": "https://archive.org/details/ow56lrcu116wueinz8maklsmb6sjydggxrkdlut1"
   },
   {
-    "title": "highabovethelotus",
-    "type": "audio",
-    "identifier": "high-above-the-lotusorgan",
-    "url": "https://archive.org/details/high-above-the-lotusorgan"
-  },
-  {
     "title": "KSCO 1080 AM [AM 1080 KSCO] : February 26, 2019 06:00AM-07:00AM PST",
     "type": "audio",
     "identifier": "KSCO_1080_AM_20190226_140000",
@@ -358,5 +352,11 @@
     "type": "audio",
     "identifier": "KLTT_670_AM_20181021_210000",
     "url": "https://archive.org/details/KLTT_670_AM_20181021_210000"
+  },
+  {
+    "title": "KMEC 105.1 FM [KMEC 105.1] : August 29, 2018 02:00PM-03:00PM PDT",
+    "type": "audio",
+    "identifier": "KMEC_105_1_FM_20180829_210000",
+    "url": "https://archive.org/details/KMEC_105_1_FM_20180829_210000"
   }
 ]
